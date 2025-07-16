@@ -47,7 +47,7 @@ const dequeue = () => {
         <VCol cols="3">
           <InfoCard
             title="ผู้รอคิว"
-            :stats="5"
+            :stats="queueStore.queues.length"
             unit="คน"
             icon="mdi-table-account"
             color="warning"
@@ -84,14 +84,14 @@ const dequeue = () => {
   </VCard>
   <VCard class="mt-5">
     <VList lines="two">
-      <VListItem>
-        <VListItemTitle>คุณตุ๊ก 0801947273</VListItemTitle>
-        <VListItemSubtitle>เข้ามาเมื่อ 12.35น. ทั้งหมด 5 คน</VListItemSubtitle>
+      <VListItem v-for="(item, index) in queueStore.queues" :key="index">
+        <VListItemTitle>{{item.name}}</VListItemTitle>
+        <VListItemSubtitle>เข้ามาเมื่อ {{ item.timestamp }} ทั้งหมด{{item.people}} คน</VListItemSubtitle>
         <template v-slot:prepend>
           <VAvatar color="primary"><span class="text-h5 text-white">1</span></VAvatar>
         </template>
         <template v-slot:append>
-          <span class="text-h6 me-2">รอมาแล้ว 5 นาที</span>
+          <span class="text-h6 me-2">รอมาแล้ว ปป นาที</span>
           <VBtn color="success" class="me-2"><VIcon>mdi-account-voice</VIcon> เรียกคิว</VBtn>
         </template>
       </VListItem>
@@ -102,6 +102,6 @@ const dequeue = () => {
     :data="quueuInitData" 
     title="เพิ่มคิวใหม่" 
     :format="formats" 
-    @onSubmit="enqueue"
+    @Submit="enqueue"
   />
 </template>

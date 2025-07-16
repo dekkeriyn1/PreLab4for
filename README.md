@@ -36,4 +36,4 @@ npm run build
 # PreLab4for
 
 
-sheet[File Factor](https://docs.google.com/document/d/1nyYGDBaIZu6PjthDzyW5JXqncs8Py2uO-C2_oNNIEfI/edit?usp=sharing)
+sheet > [File Factor](https://docs.google.com/document/d/1nyYGDBaIZu6PjthDzyW5JXqncs8Py2uO-C2_oNNIEfI/edit?usp=sharing)

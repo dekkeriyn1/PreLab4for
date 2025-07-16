@@ -1,6 +1,21 @@
-<script setup>
-</script>
+import { defineStore } from "pinia";
 
-<template>
-  
-</template>
+export const useQueueStore = defineStore({
+  id: "queue",
+  state: () => {
+    return {
+      queues : [
+        {
+          name : "",
+          people : 0,
+          phone : "",
+          status : "waiting",
+          timestamp : ""          
+        },        
+      ]
+    }
+  },
+  actions: {
+    
+  }
+});

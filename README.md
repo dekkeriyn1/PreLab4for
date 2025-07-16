@@ -34,3 +34,6 @@ npm run dev
 npm run build
 ```
 # PreLab4for
+
+
+sheet(https://docs.google.com/document/d/1nyYGDBaIZu6PjthDzyW5JXqncs8Py2uO-C2_oNNIEfI/edit?usp=sharing)

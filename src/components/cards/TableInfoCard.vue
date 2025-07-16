@@ -1,53 +1,69 @@
 <script setup>
+import { useTableStore } from '@/store/table';
+import { useTransactionStore } from '@/store/transaction';
+
+import AddMenuDialog from '@/components/dialogs/AddMenuDialog.vue';
+import BillDialog from '@/components/dialogs/BillDialog.vue';
+
+const tableStore = useTableStore();
+const transactionStore = useTransactionStore();
+
+
+
+const showAddMenuDialog = ref(false);
+const showBillDialog = ref(false);
+
 const props = defineProps({
   table: Object,
-})
+});
 
+const onBill = (table)=>{
+  transactionStore.addTransaction({
+    table: table.name,
+    type: 'income',
+    foods: table.foods,
+    total: table.total,
+    category: 'food',
+  });
+  tableStore.clearTable(table.name);
+  showBillDialog.value = false;
+
+  
+}
+const onAddFood = (menu)=>{
+  tableStore.addFood(props.table.name, menu);
+  showMenuDialog.value = false;
+
+}
 </script>
-
-
-
 <template>
   <VCard class="w-100 h-100">
-    <VToolbar
-      flat
-      density="compact"
-      :color="offline? 'grey':'primary'"
-      dark
-    >
-      <VIcon class="ml-3">
-        mdi-chip
-      </VIcon>
+    <VToolbar flat density="compact" :color="offline? 'grey':'primary'" dark>
+      <VIcon class="ml-3">mdi-chip</VIcon>
       <VToolbarTitle>
-        {{ props.table.name }}
+        {{ props.table.name }}      
       </VToolbarTitle>      
-      <VSpacer />
-      <span>เวลาเข้า: {{ props.table.checkin }} น.</span>
+      <VSpacer></VSpacer>      
     </VToolbar>
     <VCardText class="pa-3">
       <div class="d-flex justify-space-between">        
-        <span><VIcon>mdi-account</VIcon> จำนวนลูกค้า:</span>
-        <span>{{ props.table.user }}</span>
+        <span><VIcon>mdi-clock</VIcon> เวลาเริ่ม:</span>
+        <span>{{props.table.checkin}} น.</span>
       </div>
       <div class="d-flex justify-space-between">
         <span><VIcon>mdi-food</VIcon> รายการอาหาร:</span>
-        <span>{{ props.table.food }} รายการ</span>
+        <span>{{ props.table.foods.length }} รายการ</span>
       </div>
       <div class="d-flex justify-space-between">
         <span><VIcon>mdi-cash</VIcon> ยอดรวม:</span>
-        <span>{{ props.table.total }} บาท</span>
+        <span>{{props.table.total}} บาท</span>
       </div>
     </VCardText>
     <VCardActions class="d-flex align-center justify-center">
-      <VBtn color="primary">
-        เพิ่มรายการอาหาร
-      </VBtn>
-      <VBtn
-        color="success"
-        @click="$emit('pay', props.table)"
-      >
-        ชำระเงิน
-      </VBtn>
+      <VBtn @click="showAddMenuDialog = true" color="primary">เพิ่มรายการอาหาร</VBtn>
+      <VBtn @click="showBillDialog = true" color="success" >ชำระเงิน</VBtn>
     </VCardActions>    
   </VCard>
+  <AddMenuDialog v-model="showAddMenuDialog" @selectedMenu="onAddFood" />
+  <BillDialog v-model="showBillDialog" @submit="onBill" :table="props.table"  />
 </template>

@@ -1,31 +1,23 @@
 <script setup>
-import InfoCard from "@/components/cards/InfoCard.vue"
-import TableInfoCard from "@/components/cards/TableInfoCard.vue"
-import { useTableStore } from "@/store/table"
-import { onMounted } from 'vue'
+import InfoCard from "@/components/cards/InfoCard.vue";
+import TableInfoCard from "@/components/cards/TableInfoCard.vue";
 
-const tableStore = useTableStore()
+import { useTableStore } from "@/store/table";
+const tableStore = useTableStore();
 
-onMounted(() => {
-  tableStore.tables.forEach(table => {
-    table.showInfo = false
-  })
-})
-function handlePay(table) {
-  table.showInfo = false
-}
+const reserveTable = (table) => {
+  table.status = 'reserve'
+  table.checkin = (new Date()).toLocaleTimeString()
+};
 
-const reserveTable = table => {
-  table.status = 'ready'
-  table.checkin = new Date().toLocaleString('th-TH', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  })
-  table.showInfo = true
-}
+const availableTables = computed(() => {
+  return tableStore.tables.filter((table) => table.status == 'ready');
+});
+const reservedTables = computed(() => {
+  return tableStore.tables.filter((table) => table.status == 'reserve');
+});
+
 </script>
-
 <template>
   <VCard>
     <VCardItem>
@@ -36,7 +28,7 @@ const reserveTable = table => {
         <VCol cols="3">
           <InfoCard
             title="โต๊ะทั้งหมด"
-            :stats="10"
+            :stats=tableStore.tables.length
             unit="ตัว"
             icon="mdi-table"
             color="primary"
@@ -45,7 +37,7 @@ const reserveTable = table => {
         <VCol cols="3">
           <InfoCard
             title="โต๊ะว่าง"
-            :stats="5"
+            :stats= "availableTables.length"
             unit="ตัว"
             icon="mdi-table-plus"
             color="success"
@@ -54,7 +46,7 @@ const reserveTable = table => {
         <VCol cols="3">
           <InfoCard
             title="ใช้งานอยู่"
-            :stats="5"
+            :stats="reservedTables.length"
             unit="ตัว"
             icon="mdi-table-account"
             color="warning"
@@ -62,49 +54,29 @@ const reserveTable = table => {
         </VCol>
         <VCol cols="3">
           <VCard class="align-center justify-center d-flex fill-height">
-            <VBtn
+            <VBtn                
               class="fill-height"
               variant="text"
               block
               text
             >
               <VIcon>mdi-plus</VIcon>
-              เพิ่มโต๊ะใหม่
+              เพิมโต๊ะใหม่
             </VBtn>
           </VCard>
         </VCol>
       </VRow>
     </VCardText>
   </VCard>
-
-
   <VCard class="mt-8">
     <VCardText>
       <VRow>
-        <VCol
-          v-for="table in tableStore.tables"
-          :key="table.id"
-          cols="3"
-          class="d-flex align-center justify-center"
-        >
-          <template v-if="table.showInfo">
-            <TableInfoCard
-              :table="table"
-              @pay="handlePay"
-            />
-          </template>
-          <template v-else>
-            <VBtn
-              size="x-large"
-              block
-              prepend-icon="mdi-table"
-              height="200"
-              @click="reserveTable(table)"
-            >
-              {{ table.name }} - {{ table.status }}
-            </VBtn>
-          </template>
-        </VCol>
+        <VCol v-for="table in tableStore.tables" cols="3" class="d-flex align-center justify-center">
+          <v-btn v-if="table.status=='ready'" @click="reserveTable(table)" size="x-large" block prepend-icon="mdi-table" height="200">            
+            {{ table.name }} - {{ table.status }}
+          </v-btn>
+          <TableInfoCard v-else :table="table"/>
+        </VCol>          
       </VRow>
     </VCardText>
   </VCard>
